@@ -1,23 +1,58 @@
 {
   "name": "td-manager",
-  "displayName": "TD-manager",
-  "description": "",
+  "displayName": "TD(Technical Debit) Manager",
+  "description": "Helps you manage Technical debt in your project",
   "version": "0.0.1",
+  "icon": "/icon/logo.png",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.70.0"
   },
   "categories": [
+    "Notebooks",
+    "Formatters",
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
+    "menus": {
+      "view/title": [
+        {
+          "command": "td-manager.refreshEntry",
+          "when": "view == td-manager",
+          "group": "navigation"
+         }
+      ]
+    },
     "commands": [
       {
-        "command": "td-manager.helloWorld",
-        "title": "Hello World"
+        "command": "td-manager.refreshEntry",
+        "title": "Refresh TD manager list",
+        "icon": "$(refresh)"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "TD-manager"
+    },
+    "views": {
+      "explorer-td": [
+        {
+          "id": "td-manager",
+          "name": "TD manager"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "explorer-td",
+          "title": "TD-manager",
+          "icon": "/icon/logo.svg"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
