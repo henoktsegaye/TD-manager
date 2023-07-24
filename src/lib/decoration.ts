@@ -60,6 +60,7 @@ export const addDecoration = (
     renderOptions: {
       after: {
         margin: "0 0 0 1em",
+        fontWeight: 'bold',
         contentText: getSign(level),
       },
     },
