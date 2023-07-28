@@ -36,7 +36,7 @@ export const getDecoration = (fileContent: string, fileName?: string) => {
   const matches = matchAllTD(fileContent);
   const dec: TDs[] = [];
   matches.forEach((match, index) => {
-    if (!match) {
+    if (!match || !match.td) {
       return;
     }
     const { label, level, td } = match;

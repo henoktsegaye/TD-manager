@@ -13,7 +13,7 @@ import { randomUUID } from "crypto";
 // returns matches of label, level and message for each match
 
 const pattern =
-  /\/\/\s*TD:\s*(?:\[([^\]]+)\])?\s*(?:\(([^\)]+)\))?\s*-\s*(.*)/g;
+  /\/\/\s*TD\s*:\s*(?:\[([^\]]+)\])?\s*(?:\(([^\)]+)\))?(?:\s*(-)?\s*(.*))/g;
 
 export const testTDPattern = (text: string) => {
   return pattern.test(text);
@@ -22,9 +22,9 @@ export const testTDPattern = (text: string) => {
 type Match = {
   id: string;
   td: string;
-  label: string;
-  level: string;
-  message: string;
+  label?: string;
+  level?: string;
+  message?: string;
 };
 
 export const matchAllTD = (text: string) => {

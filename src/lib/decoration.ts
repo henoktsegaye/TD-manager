@@ -15,7 +15,7 @@ export const decoration = window.createTextEditorDecorationType({
   },
 });
 
-export const getSign = (level: string) => {
+export const getSign = (level?: string) => {
   let sign = "💀";
   if (level === "1") {
     sign = "🫤";
@@ -35,9 +35,9 @@ export const getSign = (level: string) => {
   return sign;
 };
 
-const getHoverMessage = (label: string, level: string) => {
+const getHoverMessage = (label?: string, level?: string) => {
   return new MarkdownString(
-    `**Technical Debt**\n\n Label -${label}\n\n Level-${level}`
+    `**Technical Debt**\n\n Label -${label || 'Unknown'}\n\n Level-${level || 'Unknown'}`
   );
 };
 
@@ -45,8 +45,8 @@ export const addDecoration = (
   activeEditor: TextEditor,
   tdLength: number,
   line: number,
-  label: string,
-  level: string
+  label?: string,
+  level?: string
 ): DecorationOptions | undefined => {
   if (!tdLength) {
     return;

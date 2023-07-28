@@ -5,13 +5,15 @@ const excludeFolders = ["node_modules", ".git"];
 
 export type TDs = {
   id: string;
-  label: string;
-  level: string;
+  label?: string;
+  level?: string;
   td: string;
-  message: string;
+  message?: string;
   line: number;
   fileName?: string;
 };
+
+const supportedExtensions = ["ts", "js", "tsx", "jsx", "vue", "html", "css" , "python"];
 
 type FileTDs = Map<string, TDs[]>;
 
@@ -27,7 +29,7 @@ export class TDManager {
     for (const file of tdFiles) {
       const fileContent = (await workspace.fs.readFile(file)).toString();
       const decs = getDecoration(fileContent, file.fsPath);
-      if (!decs) {
+      if (!decs.length) {
         continue;
       }
       tdFilesMap.set(file.fsPath, decs);
@@ -38,7 +40,9 @@ export class TDManager {
   private async getAllTDInWorkspace() {
     const files = await this.getAllFilesInWorkspace();
     const tdFiles = files.filter((file) => {
-      return file.fsPath.endsWith(".ts") || file.fsPath.endsWith(".js");
+      const split = file.fsPath.split(".");
+      const extension = split[split.length - 1];
+      return supportedExtensions.includes(extension);
     });
     return tdFiles;
   }

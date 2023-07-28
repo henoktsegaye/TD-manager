@@ -81,7 +81,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
           },
         ],
       },
-      label: `${getSign(tdValues.level)} ${tdValues.label} - ${tdValues.level}`,
+      label: `${getSign(tdValues.level)} ${tdValues.label ?? ""}  ${tdValues.level ? ` - ${tdValues.level}`: ""}`,
       id: element,
       collapsibleState: vscode.TreeItemCollapsibleState.None,
     };
