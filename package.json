@@ -2,7 +2,7 @@
   "name": "td-manager",
   "displayName": "TD(Technical Debit) Manager",
   "description": "Helps you manage Technical debt in your project",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "HenokTsegaye",
   "icon": "icon/logo.png",
   "engines": {
