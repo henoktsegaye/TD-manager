@@ -26,7 +26,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
 
   async watchChanges() {
     const watcher = vscode.workspace.createFileSystemWatcher(
-      "**/*.{ts,js}",
+      "**/*.{*}",
       true,
       false,
       true
