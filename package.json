@@ -2,7 +2,7 @@
   "name": "td-manager",
   "displayName": "TD(Technical Debit) Manager",
   "description": "Helps you manage Technical debt in your project",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "HenokTsegaye",
   "icon": "icon/logo.png",
   "engines": {
@@ -27,7 +27,6 @@
       {
         "view": "td-manager",
         "contents": "No TD comments found. Once you have TD comments it will show here"
-
       }
     ],
     "menus": {
@@ -36,7 +35,7 @@
           "command": "td-manager.refreshEntry",
           "when": "view == td-manager",
           "group": "navigation"
-         }
+        }
       ]
     },
     "commands": [
@@ -44,6 +43,10 @@
         "command": "td-manager.refreshEntry",
         "title": "Refresh TD manager list",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "hello-world.showHelloWorld",
+        "title": "Hello World (React + Vite): Show"
       }
     ],
     "configuration": {
@@ -54,6 +57,11 @@
         {
           "id": "td-manager",
           "name": "TD manager"
+        },
+        {
+          "type": "webview",
+          "id": "td-analysis",
+          "name": "TD Analysis"
         }
       ]
     },
@@ -68,6 +76,9 @@
     }
   },
   "scripts": {
+    "install:all": "npm install && cd webview-ui && npm install",
+    "start:webview": "cd webview-ui && npm run start",
+    "build:webview": "cd webview-ui && npm run build",
     "vscode:prepublish": "pnpm run package",
     "compile": "webpack",
     "watch": "webpack --watch",
@@ -79,19 +90,19 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.70.0",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "20.2.5",
+    "@types/vscode": "^1.70.0",
     "@typescript-eslint/eslint-plugin": "^5.59.8",
     "@typescript-eslint/parser": "^5.59.8",
+    "@vscode/test-electron": "^2.3.2",
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
-    "typescript": "^5.1.3",
     "ts-loader": "^9.4.3",
+    "typescript": "^5.1.3",
     "webpack": "^5.85.0",
-    "webpack-cli": "^5.1.1",
-    "@vscode/test-electron": "^2.3.2"
+    "webpack-cli": "^5.1.1"
   }
 }

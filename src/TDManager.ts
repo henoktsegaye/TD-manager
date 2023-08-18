@@ -1,7 +1,20 @@
 import { workspace } from "vscode";
 import { getDecoration } from "./lib/detectTDPatterns";
 
-const excludeFolders = ["node_modules", ".git"];
+// node_modules, build , dist and anything that stats with a dot
+const excludeFolders = [
+  "node_modules",
+  "build",
+  "dist",
+  "dist-cache",
+  ".next",
+  ".cache",
+  ".git",
+  ".output",
+  ".gradle",
+  ".idea",
+  "vender",
+];
 
 export type TDs = {
   id: string;
@@ -23,11 +36,17 @@ export class TDManager {
 
   public async getAllTD(): Promise<FileTDs> {
     const tdFilesMap = new Map<string, TDs[]>();
-    const tdFiles = await this.getAllTDInWorkspace();
+    const tdFiles = await this.filesInWorkspace();
     for (const file of tdFiles) {
       const fileContent = (await workspace.fs.readFile(file)).toString();
+      if (!fileContent) {
+        continue;
+      }
       const decs = getDecoration(fileContent, file.fsPath);
-      if (!decs.length) {
+      if (!decs) {
+        continue;
+      }
+      if (decs.length === 0) {
         continue;
       }
       tdFilesMap.set(file.fsPath, decs);
@@ -35,14 +54,14 @@ export class TDManager {
     return tdFilesMap;
   }
 
-  private async getAllTDInWorkspace() {
+  public filesInWorkspace() {
     return this.getAllFilesInWorkspace();
   }
 
   private getAllFilesInWorkspace() {
     return workspace.findFiles(
       "**/*",
-      `!**/{${excludeFolders.join(",")}}/**`,
+      `**/{${excludeFolders.join(",")}}/**`,
       1000
     );
   }

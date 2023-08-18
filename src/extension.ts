@@ -4,6 +4,10 @@ import * as vscode from "vscode";
 import { detectTDPatterns } from "./lib/detectTDPatterns";
 import { TDManager } from "./TDManager";
 import { TDTreeProvider } from "./TDTreeProvider";
+import { AnalyticsWebPanel } from "./panels/AnalyticsPanel";
+import { commands, ExtensionContext } from "vscode";
+import { TDAnalytics } from "./TDAnalytics";
+import { TDFileDecorator } from "./FileDecoratorProvider";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -29,6 +33,18 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.workspace.onDidOpenTextDocument(() => {
     detectTDPatterns();
   });
+  const tdAnalytics = new TDAnalytics(tdManager, workspaceRoot ?? "");
+  vscode.window.registerWebviewViewProvider(
+    "td-analysis",
+    new AnalyticsWebPanel(context.extensionUri, tdAnalytics),
+    {
+      webviewOptions: {
+        retainContextWhenHidden: true,
+      },
+    }
+  );
+  const fileDec = new TDFileDecorator(tdManager);
+  vscode.window.registerFileDecorationProvider(fileDec);
 }
 
 // This method is called when your extension is deactivated

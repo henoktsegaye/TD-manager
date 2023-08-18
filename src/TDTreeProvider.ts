@@ -29,7 +29,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
       "**/*.{*}",
       true,
       false,
-      true
+      false
     );
     watcher.onDidChange(async () => {
       const allTds = await this._tdManager.getAllTD();
@@ -54,7 +54,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
 
   getTreeItem(element: string): vscode.TreeItem {
     if (this.#allTds.has(element)) {
-      return {
+       return {
         label: `${getFileName(element)} - ${this.#allTds.get(element)?.length}`,
         description: element,
         collapsibleState: vscode.TreeItemCollapsibleState.Expanded,

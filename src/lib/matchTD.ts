@@ -16,7 +16,9 @@ const pattern =
   /\/\/\s*TD\s*:\s*(?:\[([^\]]+)\])?\s*(?:\(([^\)]+)\))?(?:\s*(-)?\s*(.*))/g;
 
 export const testTDPattern = (text: string) => {
-  return pattern.test(text);
+  const result = pattern.test(text);
+  pattern.lastIndex = 0;
+  return result;
 };
 
 type Match = {
@@ -28,22 +30,34 @@ type Match = {
 };
 
 export const matchAllTD = (text: string) => {
-  const matches = text.matchAll(pattern);
-  const matchArr: Match[] = [];
-  for (const match of matches) {
-    matchArr.push({
-      id: randomUUID(),
-      td: match[0],
-      label: match[1],
-      level: match[2],
-      message: match[4],
-    });
+  try {
+    const matches = [];
+    let match = null;
+    while ((match = pattern.exec(text))) {
+      matches.push([...match]);
+    }
+    pattern.lastIndex = 0;
+
+    const matchArr: Match[] = [];
+    for (const match of matches) {
+      matchArr.push({
+        id: randomUUID(),
+        td: match[0],
+        label: match[1],
+        level: match[2],
+        message: match[4],
+      });
+    }
+    return matchArr;
+  } catch (e) {
+    console.error("ERROR", e);
+    return [];
   }
-  return matchArr;
 };
 
 export const matchTD = (text: string) => {
   const match = text.match(pattern);
+  pattern.lastIndex = 0;
   if (!match) {
     return;
   }
