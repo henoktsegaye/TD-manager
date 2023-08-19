@@ -11,6 +11,7 @@ import { TDFileDecorator } from "./FileDecoratorProvider";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
+//TD: [combile-state](2) - we need to combine state
 export function activate(context: vscode.ExtensionContext) {
   const workspaceRoot = vscode.workspace.rootPath;
 

@@ -13,14 +13,12 @@ import { randomUUID } from "crypto";
 // returns matches of label, level and message for each match
 
 const pattern =
-  /\/\/\s*TD\s*:\s*(?:\[([^\]]+)\])?\s*(?:\(([^\)]+)\))?(?:\s*(-)?\s*(.*))/g;
-
+/\/\/[ \t]*TD[ \t]*:[ \t]*(?:\[([^\]]+)\])?[ \t]*(?:\(([^)]+)\))?(?:[ \t]*(-)?[ \t]*([^\r\n]*))/g;
 export const testTDPattern = (text: string) => {
   const result = pattern.test(text);
   pattern.lastIndex = 0;
   return result;
 };
-
 type Match = {
   id: string;
   td: string;
@@ -37,6 +35,7 @@ export const matchAllTD = (text: string) => {
       matches.push([...match]);
     }
     pattern.lastIndex = 0;
+    console.log('Matches are ', matches)
 
     const matchArr: Match[] = [];
     for (const match of matches) {

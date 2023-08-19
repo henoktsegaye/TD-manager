@@ -2,7 +2,6 @@
 .vscode-test/**
 out/**
 node_modules/**
-src/**
 .gitignore
 .yarnrc
 webpack.config.js
@@ -11,7 +10,7 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
-
+ 
 # This file contains all the files/directories that should
 # be ignored (i.e. not included) in the final packaged extension.
 

@@ -2,7 +2,7 @@
   "name": "td-manager",
   "displayName": "TD(Technical Debit) Manager",
   "description": "Helps you manage Technical debt in your project",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "publisher": "HenokTsegaye",
   "icon": "icon/logo.png",
   "engines": {
@@ -80,7 +80,7 @@
     "start:webview": "cd webview-ui && npm run start",
     "build:webview": "cd webview-ui && npm run build",
     "vscode:prepublish": "pnpm run package",
-    "compile": "webpack",
+    "compile": "webpack ",
     "watch": "webpack --watch",
     "package": "webpack --mode production --devtool hidden-source-map",
     "compile-tests": "tsc -p . --outDir out",

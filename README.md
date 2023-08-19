@@ -23,11 +23,13 @@ You can merge similar `TD` issues with a label. If you have the same label in mu
 
 When you have a label and a level , TD-manager would help you see the analytics in the future.
 
-Analytics is not here yet but it will be soon.
+##
+Analytics is here now ( the basic version .) 
  
- 
-## Known Issues
+## changelog
 
-Analytics is not here yet but it will be soon.
-WIP
-
+### 0.0.1
+Basic version of the extension.
+### 0.0.7
+Added analytics for the TDs.
+Fixed issues with TD recognition and file decorator
