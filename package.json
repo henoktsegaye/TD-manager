@@ -1,7 +1,7 @@
 {
   "name": "td-manager",
-  "displayName": "TD(Technical Debit) Manager",
-  "description": "Helps you manage Technical debt in your project",
+  "displayName": "TD(Technical Debt) Manager",
+  "description": "Helps you manage Technical debt in your project. It helps you detect Technical debt issues and share among team members.",
   "version": "0.0.7",
   "publisher": "HenokTsegaye",
   "icon": "icon/logo.png",

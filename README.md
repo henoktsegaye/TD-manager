@@ -1,6 +1,6 @@
 # TD Manager 
 
-**Helps you manage TD(Technical Debit) right from your extension.**
+**Helps you manage TD(Technical Debt) right from your extension.**
 List the `TD` comments in all files of the projects and show them in a list.
 You can find the `TD` explorer view in the `Activity Bar` of VSCode. Which will show you the list of all `TD` comments in your project.
 You can also set `level` for the `TD` comments. Which will help you to see the `TD` comments in the `Activity Bar` of VSCode.
