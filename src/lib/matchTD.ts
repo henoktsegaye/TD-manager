@@ -35,8 +35,7 @@ export const matchAllTD = (text: string) => {
       matches.push([...match]);
     }
     pattern.lastIndex = 0;
-    console.log('Matches are ', matches)
-
+ 
     const matchArr: Match[] = [];
     for (const match of matches) {
       matchArr.push({

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { TDManager, TDs } from "./TDManager";
 import { getSign } from "./lib/decoration";
 import { getFileName } from "./lib/file";
+import { TDVscodeManager } from "./VSCodeTDManager";
 
 type TDTreeItem = {
   label: string;
@@ -10,58 +11,53 @@ type TDTreeItem = {
 };
 
 export class TDTreeProvider implements vscode.TreeDataProvider<any> {
-  #allTds = new Map<string, TDs[]>();
   readonly #eventEmitter = new vscode.EventEmitter<void>();
   public readonly onDidChangeTreeData: vscode.Event<void>;
 
-  constructor(private _tdManager: TDManager) {
+  constructor(private _tdManager: TDVscodeManager) {
     this._tdManager = _tdManager;
     this.onDidChangeTreeData = this.#eventEmitter.event;
-    this.watchChanges();
+    this._tdManager.subscribe(() => {
+      this.#eventEmitter.fire();
+    });
   }
 
   public refresh(): void {
-    this.#eventEmitter.fire();
-  }
-
-  async watchChanges() {
-    const watcher = vscode.workspace.createFileSystemWatcher(
-      "**/*.{*}",
-      true,
-      false,
-      false
-    );
-    watcher.onDidChange(async () => {
-      const allTds = await this._tdManager.getAllTD();
-      this.#allTds = allTds;
+    this._tdManager.setInitialTDs().then(() => {
       this.#eventEmitter.fire();
     });
   }
 
   async getChildren(element?: string): Promise<string[]> {
     if (!element) {
-      if (!this.#allTds.size) {
-        const allTds = await this._tdManager.getAllTD();
-        this.#allTds = allTds;
+      if (!this._tdManager.getTDs().size) {
+        return [];
       }
-      return Array.from(this.#allTds.keys()).sort();
+      return Array.from(this._tdManager.getTDs().keys()).sort();
     }
-    if (!this.#allTds.has(element)) {
+    if (!this._tdManager.getTDs().has(element)) {
       return [];
     }
-    return this.#allTds.get(element)?.map((td) => td.id) || [];
+    return (
+      this._tdManager
+        .getTDs()
+        .get(element)
+        ?.map((td) => td.id) || []
+    );
   }
 
   getTreeItem(element: string): vscode.TreeItem {
-    if (this.#allTds.has(element)) {
-       return {
-        label: `${getFileName(element)} - ${this.#allTds.get(element)?.length}`,
+    if (this._tdManager.getTDs().has(element)) {
+      return {
+        label: `${getFileName(element)} - ${
+          this._tdManager.getTDs().get(element)?.length
+        }`,
         description: element,
         collapsibleState: vscode.TreeItemCollapsibleState.Expanded,
       };
     }
 
-    const tdValuesArr = Array.from(this.#allTds.values()).flat();
+    const tdValuesArr = Array.from(this._tdManager.getTDs().values()).flat();
     const tdValues = tdValuesArr.find((td) => td.id === element);
     if (!tdValues) {
       return {
@@ -70,7 +66,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
         collapsibleState: vscode.TreeItemCollapsibleState.None,
       };
     }
-    return {
+     return {
       command: {
         command: "vscode.open",
         title: "Open",
@@ -81,7 +77,9 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
           },
         ],
       },
-      label: `${getSign(tdValues.level)} ${tdValues.label ?? ""}  ${tdValues.level ? ` - ${tdValues.level}`: ""}`,
+      label: `${getSign(tdValues.level)} ${tdValues.label ?? ""}  ${
+        tdValues.level ? ` - ${tdValues.level}` : ""
+      }`,
       id: element,
       collapsibleState: vscode.TreeItemCollapsibleState.None,
     };

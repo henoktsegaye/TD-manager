@@ -6,54 +6,46 @@ import {
   Uri,
   workspace,
   Event,
+  window,
 } from "vscode";
 import { TDManager } from "./TDManager";
 import { testTDPattern } from "./lib/matchTD";
+import { TDVscodeManager } from "./VSCodeTDManager";
 // FILE NAME decorator provider for files with TDs
 
 export class TDFileDecorator implements FileDecorationProvider {
-  #allTds = new Set<string>();
+  private _prevTDs = new Set<string>();
   readonly #eventEmitter = new EventEmitter<Uri>();
   onDidChangeFileDecorations?: Event<Uri | Uri[] | undefined> | undefined;
-  constructor(private _tdManager: TDManager) {
+  constructor(private _tdManager: TDVscodeManager) {
     this.onDidChangeFileDecorations = this.#eventEmitter.event;
     this.getAllTdFiles();
-    this.watchForChange();
-  }
+    this._tdManager.subscribe(() => {
+      const currentTds = this._tdManager.getTDs();
+      const currentTdsSet = new Set<string>(Array.from(currentTds.keys()));
 
-  async getAllTdFiles() {
-    const allTds = await this._tdManager.getAllTD();
-    this.#allTds = new Set(Array.from(allTds.keys()));
-
-    this.#allTds.forEach((td) => {
-      this.#eventEmitter.fire(Uri.file(td));
+      const added = Array.from(currentTdsSet).filter(
+        (td) => !this._prevTDs.has(td)
+      );
+      const removed = Array.from(this._prevTDs).filter(
+        (td) => !currentTdsSet.has(td)
+      );
+ 
+      for (const td of added) {
+        this.#eventEmitter.fire(Uri.file(td));
+      }
+      for (const td of removed) {
+        this.#eventEmitter.fire(Uri.file(td));
+      }
+      this._prevTDs =  currentTdsSet;
     });
   }
 
-  async watchForChange() {
-    workspace.onDidChangeTextDocument((e) => {
-      const path = e.document.uri.fsPath;
-      if (!e) {
-        return;
-      }
-      if (!e.document.uri) {
-        return;
-      }
-      const test = testTDPattern(e.document.getText());
-      if (test && this.#allTds.has(path)) {
-        return;
-      }
-      if (!test && !this.#allTds.has(path)) {
-        return;
-      }
-      if (test) {
-        this.#allTds.add(path);
-      }
-      if (!test) {
-        this.#allTds.delete(path);
-      }
+  async getAllTdFiles() {
+    const allTds = this._tdManager.getTDs();
 
-      this.#eventEmitter.fire(e.document.uri);
+    Array.from(allTds).forEach(([file, td]) => {
+      this.#eventEmitter.fire(Uri.file(file));
     });
   }
 
@@ -64,7 +56,7 @@ export class TDFileDecorator implements FileDecorationProvider {
     if (token.isCancellationRequested) {
       return;
     }
-    if (!this.#allTds.has(uri.fsPath)) {
+    if (!this._tdManager.getTDs().has(uri.fsPath)) {
       return null;
     }
     return {

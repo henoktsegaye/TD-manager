@@ -42,7 +42,7 @@ const getHoverMessage = (label?: string, level?: string) => {
 };
 
 export const addDecoration = (
-  activeEditor: TextEditor,
+  _activeEditor: TextEditor,
   tdLength: number,
   line: number,
   label?: string,

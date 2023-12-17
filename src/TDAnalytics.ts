@@ -1,24 +1,20 @@
 import { TDManager, TDs } from "./TDManager";
+import { TDVscodeManager } from "./VSCodeTDManager";
 
 export class TDAnalytics {
   #rootPath: string;
-  #allTds = new Map<string, TDs[]>();
-  constructor(private _tdManger: TDManager, rootPath: string) {
+  constructor(private _tdManger: TDVscodeManager, rootPath: string) {
     this.#rootPath = rootPath;
   }
 
-  public async clearState() {
-    this.#allTds = new Map<string, TDs[]>();
-  }
-
-  async setTds() {
-    this.#allTds = await this._tdManger.getAllTD();
+  subscribeToChanges(fn: () => void) {
+    this._tdManger.subscribe(fn);
   }
 
   async getHowMuchFilesHasTds() {
     return {
       totalFiles: (await this._tdManger.filesInWorkspace()).length,
-      filesWithTD: this.#allTds.size,
+      filesWithTD: this._tdManger.getTDs().size,
     };
   }
 
@@ -27,8 +23,8 @@ export class TDAnalytics {
       [key in string]: TDs[];
     } = {};
 
-    const tds = Array.from(this.#allTds.entries());
-    tds.forEach(([key, value]) => {
+    const tds = Array.from(this._tdManger.getTDs().entries());
+    tds.forEach(([_key, value]) => {
       value.forEach((td) => {
         const level = td.level ?? "unknown";
         if (levelsWithTds[level]) {

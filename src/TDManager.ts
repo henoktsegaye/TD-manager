@@ -29,10 +29,7 @@ export type TDs = {
 type FileTDs = Map<string, TDs[]>;
 
 export class TDManager {
-  #workspaceRoot: string;
-  constructor(private workspaceRoot: string) {
-    this.#workspaceRoot = workspaceRoot;
-  }
+  
 
   public async getAllTD(): Promise<FileTDs> {
     const tdFilesMap = new Map<string, TDs[]>();
@@ -66,3 +63,5 @@ export class TDManager {
     );
   }
 }
+
+

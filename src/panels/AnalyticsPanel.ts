@@ -19,19 +19,8 @@ export class AnalyticsWebPanel implements WebviewViewProvider {
   private _disposables: Disposable[] = [];
 
   constructor(private extensionUri: Uri, private _TDAnalytics: TDAnalytics) {
-    this.watchForChanges();
-  }
-
-  watchForChanges() {
-    const watcher = workspace.createFileSystemWatcher(
-      "**/*.{*}",
-      true,
-      false,
-      false
-    );
-    watcher.onDidChange(async () => {
-      await this._TDAnalytics.setTds();
-      await this.sendAnalytics();
+    this._TDAnalytics.subscribeToChanges(() => {
+      this.sendAnalytics();
     });
   }
 
@@ -41,15 +30,18 @@ export class AnalyticsWebPanel implements WebviewViewProvider {
     token: CancellationToken
   ): Promise<void> {
     if (token.isCancellationRequested) {
-      this._TDAnalytics.clearState();
       return;
     }
 
-    await this._TDAnalytics.setTds();
     webviewView.webview.options = {
       enableScripts: true,
       localResourceRoots: [this.extensionUri],
     };
+    this._disposables.push(
+      webviewView.onDidChangeVisibility((e) => {
+        this.sendAnalytics();
+      })
+    );
     webviewView.webview.html = this._getWebviewContent(
       webviewView.webview,
       this.extensionUri
