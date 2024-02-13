@@ -23,8 +23,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
   }
 
   public refresh(): void {
-    console.log('TDS', this._tdManager.getTDs())
-    this._tdManager.setInitialTDs().then(() => {
+     this._tdManager.setInitialTDs().then(() => {
       this.#eventEmitter.fire();
     });
   }

@@ -90,6 +90,12 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
+  context.subscriptions.push(
+    vscode.commands.registerCommand("todo-manager.refreshEntry", () =>
+      todoTreeProvider.refresh()
+    )
+  );
+
   const tdAnalytics = new TDAnalytics(tdManager, workspaceRoot ?? "");
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
