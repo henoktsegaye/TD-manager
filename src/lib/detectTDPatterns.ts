@@ -5,31 +5,29 @@ import { TDs } from "../TDManager";
 import { randomUUID } from "crypto";
 import { isNeitherNullNorUndefined } from "./ts";
 
- 
-
-
 export const setDecoration = (activeEditor: TextEditor, decsFounds: TDs[]) => {
- 
-   const decs =decsFounds
+  const decs = decsFounds
     .map((el) => {
-       const { line, label, level, td } = el;
+      const { line, label, level, td } = el;
 
       const length =
         activeEditor.document.lineAt(line).text.length || td.length;
 
-      const dec = addDecoration(activeEditor, length, line, label, level);
+      const dec = addDecoration(activeEditor, length, line, label, level, {
+        isTodo: false
+      });
       if (!dec) {
         return undefined;
       }
       return dec;
     })
     .filter(isNeitherNullNorUndefined);
-  activeEditor.setDecorations(decoration, decs);
+  return decs;
 };
 
 export const getDecoration = (fileContent: string, fileName?: string) => {
   const matches = matchAllTD(fileContent);
-   if (!matches.length) {
+  if (!matches.length) {
     return [];
   }
   const dec: TDs[] = [];
@@ -37,7 +35,7 @@ export const getDecoration = (fileContent: string, fileName?: string) => {
     if (!match || !match.td) {
       return;
     }
-    const { label, level, td } = match;
+    const { label, level, message, td } = match;
     const elements = matches
       .slice(0, index + 1)
       .filter((m) => m.td.includes(td));
@@ -53,7 +51,7 @@ export const getDecoration = (fileContent: string, fileName?: string) => {
       label,
       level,
       td,
-      message: "",
+      message,
       line,
       fileName,
     });

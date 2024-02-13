@@ -4,13 +4,12 @@ import {
   FileDecorationProvider,
   EventEmitter,
   Uri,
-  workspace,
-  Event,
+   Event,
   window,
 } from "vscode";
-import { TDManager } from "./TDManager";
-import { testTDPattern } from "./lib/matchTD";
+ 
 import { TDVscodeManager } from "./VSCodeTDManager";
+import { TODOVSCodeManager } from "./VSCodeTODOManager";
 // FILE NAME decorator provider for files with TDs
 
 export class TDFileDecorator implements FileDecorationProvider {
@@ -63,6 +62,61 @@ export class TDFileDecorator implements FileDecorationProvider {
       badge: "💀",
       tooltip: "Technical Debt",
       color: "red",
+    };
+  }
+}
+
+
+export class TODOFileDecorator implements FileDecorationProvider {
+  private _prevTODOs = new Set<string>();
+  readonly #eventEmitter = new EventEmitter<Uri>();
+  onDidChangeFileDecorations?: Event<Uri | Uri[] | undefined> | undefined;
+  constructor(private _todoManager: TODOVSCodeManager) {
+    this.onDidChangeFileDecorations = this.#eventEmitter.event;
+    this.getAllTODOFiles();
+    this._todoManager.subscribe(() => {
+      const currentTODOs = this._todoManager.getTODOs();
+      const currentTODOsSet = new Set<string>(Array.from(currentTODOs.keys()));
+
+      const added = Array.from(currentTODOsSet).filter(
+        (todo) => !this._prevTODOs.has(todo)
+      );
+      const removed = Array.from(this._prevTODOs).filter(
+        (todo) => !currentTODOsSet.has(todo)
+      );
+ 
+      for (const todo of added) {
+        this.#eventEmitter.fire(Uri.file(todo));
+      }
+      for (const todo of removed) {
+        this.#eventEmitter.fire(Uri.file(todo));
+      }
+      this._prevTODOs =  currentTODOsSet;
+    });
+  }
+
+  async getAllTODOFiles() {
+    const allTODOs = this._todoManager.getTODOs();
+
+    Array.from(allTODOs).forEach(([file, todo]) => {
+      this.#eventEmitter.fire(Uri.file(file));
+    });
+  }
+
+  async provideFileDecoration(
+    uri: Uri,
+    token: CancellationToken
+  ): Promise<FileDecoration | null | undefined> {
+    if (token.isCancellationRequested) {
+      return;
+    }
+    if (!this._todoManager.getTODOs().has(uri.fsPath)) {
+      return null;
+    }
+    return {
+      badge: "📝",
+      tooltip: "TODO notes",
+      color: "blue",
     };
   }
 }

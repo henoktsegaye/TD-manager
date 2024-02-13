@@ -1,5 +1,5 @@
 # TD Manager 
-
+![new TD-manager look](resources/newLook.png)
 **Helps you manage TD(Technical Debt) right from your extension.**
 List the `TD` comments in all files of the projects and show them in a list.
 You can find the `TD` explorer view in the `Activity Bar` of VSCode. Which will show you the list of all `TD` comments in your project.
@@ -23,13 +23,22 @@ You can merge similar `TD` issues with a label. If you have the same label in mu
 
 When you have a label and a level , TD-manager would help you see the analytics in the future.
 
-##
+## TODO viewer
+
+Now you can view TODO comments on TD-manager!.
+We just added a TODO-Viewer section.
+
+## Analytics
 Analytics is here now ( the basic version .) 
+- You can view how many files have TD comments compared to the overall file
+
  
 ## changelog
-
-### 0.0.1
-Basic version of the extension.
+### 1.0.0
+- Add Support for TODO-viewer
+- Combine state for TD and TODO viewer ( pretty responsive !)
 ### 0.0.7
 Added analytics for the TDs.
 Fixed issues with TD recognition and file decorator
+### 0.0.1
+Basic version of the extension.

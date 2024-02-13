@@ -12,14 +12,23 @@ import { randomUUID } from "crypto";
 // label and message are matched as words with space in between
 // returns matches of label, level and message for each match
 
-const pattern =
-/\/\/[ \t]*TD[ \t]*:[ \t]*(?:\[([^\]]+)\])?[ \t]*(?:\(([^)]+)\))?(?:[ \t]*(-)?[ \t]*([^\r\n]*))/g;
+const tdPattern =
+  /\/\/[ \t]*TD[ \t]*:[ \t]*(?:\[([^\]]+)\])?[ \t]*(?:\(([^)]+)\))?(?:[ \t]*(-)?[ \t]*([^\r\n]*))/g;
+const todoPattern = /\/\/[ \t]*TODO[ \t]*:[ \t]*([^\r\n]*)/g;
+
 export const testTDPattern = (text: string) => {
-  const result = pattern.test(text);
-  pattern.lastIndex = 0;
+  const result = tdPattern.test(text);
+  tdPattern.lastIndex = 0;
   return result;
 };
-type Match = {
+
+export const testTodoPattern = (text: string) => {
+  const result = todoPattern.test(text);
+  todoPattern.lastIndex = 0;
+  return result;
+};
+
+type TDMatch = {
   id: string;
   td: string;
   label?: string;
@@ -27,16 +36,22 @@ type Match = {
   message?: string;
 };
 
+export type TodoMatch = {
+  id: string;
+  todo: string;
+  message?: string;
+};
+
 export const matchAllTD = (text: string) => {
   try {
     const matches = [];
     let match = null;
-    while ((match = pattern.exec(text))) {
+    while ((match = tdPattern.exec(text))) {
       matches.push([...match]);
     }
-    pattern.lastIndex = 0;
- 
-    const matchArr: Match[] = [];
+    tdPattern.lastIndex = 0;
+
+    const matchArr: TDMatch[] = [];
     for (const match of matches) {
       matchArr.push({
         id: randomUUID(),
@@ -53,9 +68,33 @@ export const matchAllTD = (text: string) => {
   }
 };
 
+export const matchAllTODO = (text: string) => {
+  try {
+    const matches = [];
+    let match = null;
+    while ((match = todoPattern.exec(text))) {
+      matches.push([...match]);
+    }
+    todoPattern.lastIndex = 0;
+
+    const matchArr: TodoMatch[] = [];
+    for (const match of matches) {
+      matchArr.push({
+        id: randomUUID(),
+        message: match[1],
+        todo: match[0],
+      });
+    }
+    return matchArr;
+  } catch (e) {
+    console.error("ERROR", e);
+    return [];
+  }
+};
+
 export const matchTD = (text: string) => {
-  const match = text.match(pattern);
-  pattern.lastIndex = 0;
+  const match = text.match(tdPattern);
+  tdPattern.lastIndex = 0;
   if (!match) {
     return;
   }
@@ -64,4 +103,15 @@ export const matchTD = (text: string) => {
   const level = match[2];
   const message = match[3];
   return { label, level, message, td, match };
+};
+
+export const matchTODO = (text: string) => {
+  const match = text.match(todoPattern);
+  todoPattern.lastIndex = 0;
+  if (!match) {
+    return;
+  }
+  const todo = match[0];
+  const message = match[1];
+  return { message, todo, match };
 };

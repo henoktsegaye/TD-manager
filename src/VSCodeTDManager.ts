@@ -5,15 +5,16 @@ import { getDecoration, setDecoration } from "./lib/detectTDPatterns";
 export class TDVscodeManager extends TDManager {
   private _allTds = new Map<string, TDs[]>();
   private _subscribedToChange: (() => void)[] = [];
-   private _watcher: vscode.FileSystemWatcher;
+  private _watcher: vscode.FileSystemWatcher;
 
   constructor() {
     super();
     this.setInitialTDs();
     this._watcher = this.watchChanges();
-    vscode.window.onDidChangeActiveTextEditor(this.getTDForActiveFile.bind(this));
-    vscode.workspace.onDidChangeTextDocument(this.getTDForActiveFile.bind(this));
-    vscode.workspace.onDidOpenTextDocument(this.getTDForActiveFile.bind(this));
+
+    vscode.workspace.onDidChangeTextDocument(
+      this.getTDForActiveFile.bind(this)
+    );
   }
 
   resetTDs() {
@@ -29,7 +30,7 @@ export class TDVscodeManager extends TDManager {
   async setInitialTDs() {
     try {
       this._allTds = await this.getAllTD();
-     } catch (error) {
+    } catch (error) {
       console.error(error);
     } finally {
       this._subscribedToChange.forEach((fn) => fn());
@@ -47,19 +48,17 @@ export class TDVscodeManager extends TDManager {
     }
     const activeFile = activeEditor.document.fileName;
     const text = activeEditor.document.getText();
-    
 
     const decorations = getDecoration(text, activeFile);
-     if (!areEqualsTDsShallow(decorations, this._allTds.get(activeFile) ?? [])) {
+    if (!areEqualsTDsShallow(decorations, this._allTds.get(activeFile) ?? [])) {
       if (!decorations.length) {
         this._allTds.delete(activeFile);
       } else {
         this._allTds.set(activeFile, decorations);
       }
       this._subscribedToChange.forEach((fn) => fn());
+      setDecoration(activeEditor, decorations);
     }
-    
-    setDecoration(activeEditor, decorations);
   }
 
   subscribe(fn: () => void) {
@@ -71,8 +70,6 @@ export class TDVscodeManager extends TDManager {
       (subscribedFn) => subscribedFn !== fn
     );
   }
-
-  
 
   watchChanges() {
     const watcher = vscode.workspace.createFileSystemWatcher(

@@ -2,7 +2,7 @@
   "name": "td-manager",
   "displayName": "TD(Technical Debt) Manager",
   "description": "Helps you manage Technical debt in your project. It helps you detect Technical debt issues and share among team members.",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "publisher": "HenokTsegaye",
   "icon": "icon/logo.png",
   "engines": {
@@ -26,7 +26,11 @@
     "viewsWelcome": [
       {
         "view": "td-manager",
-        "contents": "No TD comments found. Once you have TD comments it will show here"
+        "contents": "No TD comments found. Once you have TD comments it will show here!"
+      },
+      {
+        "view": "todo-manager",
+        "contents": "No TODO comments found. Once you have TODO comments it will show here!"
       }
     ],
     "menus": {
@@ -35,18 +39,44 @@
           "command": "td-manager.refreshEntry",
           "when": "view == td-manager",
           "group": "navigation"
+        },
+        {
+          "command": "todo-manager.refreshEntry",
+          "when": "view == todo-manager",
+          "group": "navigation"
+        },
+        {
+          "command": "todo-manager.groupByFolder",
+          "when": "view == todo-manager",
+          "group": "navigation"
+        },
+        {
+          "command": "todo-manager.list",
+          "when": "view == todo-manager",
+          "group": "navigation"
         }
       ]
     },
     "commands": [
       {
         "command": "td-manager.refreshEntry",
-        "title": "Refresh TD manager list",
+        "title": "Refresh TD manager list (For saved files only)",
         "icon": "$(refresh)"
       },
       {
-        "command": "hello-world.showHelloWorld",
-        "title": "Hello World (React + Vite): Show"
+        "command": "todo-manager.refreshEntry",
+        "title": "Refresh TODO manager list (For saved files only)",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "todo-manager.groupByFolder",
+        "title": "Group TODOs by folder",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "todo-manager.list",
+        "title": "List TODOs ",
+        "icon": "$(list-unordered)"
       }
     ],
     "configuration": {
@@ -57,6 +87,10 @@
         {
           "id": "td-manager",
           "name": "TD manager"
+        },
+        {
+          "id": "todo-manager",
+          "name": "TODO viewer"
         },
         {
           "type": "webview",

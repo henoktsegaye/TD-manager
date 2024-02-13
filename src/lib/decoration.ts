@@ -37,8 +37,14 @@ export const getSign = (level?: string) => {
 
 const getHoverMessage = (label?: string, level?: string) => {
   return new MarkdownString(
-    `**Technical Debt**\n\n Label -${label || 'Unknown'}\n\n Level-${level || 'Unknown'}`
+    `**Technical Debt**\n\n Label -${label || "Unknown"}\n\n Level-${
+      level || "Unknown"
+    }`
   );
+};
+
+const getHoverMessageTODO = (message?: string) => {
+  return new MarkdownString(`**TODO**\n\n ${message || "Unknown"}`);
 };
 
 export const addDecoration = (
@@ -46,7 +52,10 @@ export const addDecoration = (
   tdLength: number,
   line: number,
   label?: string,
-  level?: string
+  level?: string,
+  options?: {
+    isTodo?: boolean;
+  }
 ): DecorationOptions | undefined => {
   if (!tdLength) {
     return;
@@ -56,12 +65,14 @@ export const addDecoration = (
   let range = new Range(startPos, endPos);
   return {
     range,
-    hoverMessage: getHoverMessage(label, level),
+    hoverMessage: options?.isTodo
+      ? getHoverMessageTODO(label)
+      : getHoverMessage(label, level),
     renderOptions: {
       after: {
         margin: "0 0 0 1em",
-        fontWeight: 'bold',
-        contentText: getSign(level),
+        fontWeight: "bold",
+        contentText: options?.isTodo ? "📝" : getSign(level),
       },
     },
   };

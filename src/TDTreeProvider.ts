@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { TDManager, TDs } from "./TDManager";
+import {  TDs } from "./TDManager";
 import { getSign } from "./lib/decoration";
 import { getFileName } from "./lib/file";
 import { TDVscodeManager } from "./VSCodeTDManager";
@@ -15,7 +15,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
   public readonly onDidChangeTreeData: vscode.Event<void>;
 
   constructor(private _tdManager: TDVscodeManager) {
-    this._tdManager = _tdManager;
+     this._tdManager = _tdManager;
     this.onDidChangeTreeData = this.#eventEmitter.event;
     this._tdManager.subscribe(() => {
       this.#eventEmitter.fire();
@@ -23,6 +23,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
   }
 
   public refresh(): void {
+    console.log('TDS', this._tdManager.getTDs())
     this._tdManager.setInitialTDs().then(() => {
       this.#eventEmitter.fire();
     });
@@ -59,7 +60,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
 
     const tdValuesArr = Array.from(this._tdManager.getTDs().values()).flat();
     const tdValues = tdValuesArr.find((td) => td.id === element);
-    if (!tdValues) {
+     if (!tdValues) {
       return {
         id: element,
         label: element,
@@ -78,7 +79,7 @@ export class TDTreeProvider implements vscode.TreeDataProvider<any> {
         ],
       },
       label: `${getSign(tdValues.level)} ${tdValues.label ?? ""}  ${
-        tdValues.level ? ` - ${tdValues.level}` : ""
+        tdValues.level ? ` - ${tdValues.message}` : ""
       }`,
       id: element,
       collapsibleState: vscode.TreeItemCollapsibleState.None,
